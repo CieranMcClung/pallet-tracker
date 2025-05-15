@@ -15,11 +15,11 @@
   transition: background 0.3s;
 }
 #statusIndicator.offline {
-  background: var(--neon-pink);
+  background: var(--neon-red);
 }
 
 /* -----------------------------------------
-   Your Existing Variables & Base Styles
+   Existing Variables & Base Styles
    ----------------------------------------- */
 :root {
   /* Base Colors & Sizes */
