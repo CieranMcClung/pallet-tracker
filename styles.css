@@ -24,29 +24,95 @@
 :root {
   /* Base Colors & Sizes */
   --bg-gradient: linear-gradient(135deg, #0d0f12, #1a1e26);
-@@ -70,13 +93,8 @@ body {
+  --glass-bg: rgba(255,255,255,0.25);
+  --modal-bg: rgba(16, 18, 23, 0.95);
+  --text-light: #e0e6f3;
+  --text-dark: #101217;
+  --neon-blue: #00e5ff;
+  --neon-pink: #ff1ec1;
+  --neon-green: #39ff14;
+
+  /* Layout & Typography */
+  --transition: 0.3s ease;
+  --radius: 16px;
+  --gap: 12px;
+  --touch: 60px;
+  --font-base: 1.1rem;
+  --font-lg: 1.3rem;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-gradient);
+  color: var(--text-light);
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.app {
+  width: 100%;
+  max-width: 480px;
+  padding: var(--gap);
+}
+
+/* Glass Panels */
+.screen,
+.home-card,
+.container-ui {
+  background: var(--glass-bg);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+  padding: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+/* Home Screen Card */
+.home-card {
+  display: flex;
+  gap: var(--gap);
+  justify-content: center;
+}
+
+/* Buttons */
+.btn {
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px var(--gap);
+  min-height: var(--touch);
+  font-size: var(--font-base);
+  font-weight: 500;
+  cursor: pointer;
   transition: transform var(--transition);
 }
 
-.btn:hover {
-  transform: translateY(-2px);
-}
-
-.btn:active {
-  transform: scale(0.98);
-}
 .btn:hover { transform: translateY(-2px); }
 .btn:active { transform: scale(0.98); }
 
 .btn-container {
   background: var(--neon-blue);
-@@ -95,17 +113,14 @@ body {
+  color: var(--text-dark);
+  box-shadow: 0 0 8px var(--neon-blue);
+}
+
+.btn-loading {
+  background: var(--neon-pink);
+  color: var(--text-dark);
+  box-shadow: 0 0 8px var(--neon-pink);
+}
+
+.full {
+  width: 100%;
 }
 
 /* Hidden Utility */
-.hidden {
-  display: none !important;
-}
 .hidden { display: none !important; }
 
 /* Headers */
@@ -55,74 +121,114 @@
   align-items: center;
   margin-bottom: var(--gap);
 }
-
 .header h2 {
   flex: 1;
   text-align: center;
-@@ -120,7 +135,6 @@ body {
+  font-size: var(--font-lg);
+}
+
+/* Product Controls */
+.product-controls {
+  display: flex;
+  gap: var(--gap);
+  flex-wrap: wrap;
   justify-content: center;
   margin-bottom: var(--gap);
 }
-
 .product-controls .dropdown {
   flex: 1;
   min-height: var(--touch);
-@@ -149,10 +163,7 @@ body {
+  padding: 0 12px;
   font-size: var(--font-base);
-  font-weight: 600;
+  border: none;
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.1);
+  color: var(--text-light);
 }
 
-.status-bar span {
-  font-size: var(--font-lg);
+/* Empty State */
+.empty {
+  text-align: center;
+  opacity: 0.7;
+  padding: 40px 0;
+  font-size: var(--font-base);
+}
+
+/* Status Bar */
+.status-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+  font-size: var(--font-base);
+  font-weight: 600;
 }
 .status-bar span { font-size: var(--font-lg); }
 
 /* Sizes Chips */
 .sizes {
-@@ -161,7 +172,6 @@ body {
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--gap);
   margin-bottom: var(--gap);
 }
-
 .chip {
   background: rgba(255,255,255,0.1);
   border-radius: var(--radius);
-@@ -172,7 +182,6 @@ body {
+  padding: 12px;
+  min-width: var(--touch);
+  text-align: center;
+  font-size: var(--font-base);
   cursor: pointer;
   transition: background var(--transition), transform var(--transition);
 }
-
 .chip:hover {
   background: rgba(255,255,255,0.2);
   transform: translateY(-2px);
-@@ -197,20 +206,17 @@ body {
+}
+
+/* Entry Actions (Undo/Reset) */
+.entry-actions {
+  display: flex;
+  gap: var(--gap);
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  background: var(--glass-bg);
+  padding-bottom: var(--gap);
+  margin-bottom: var(--gap);
+  z-index: 10;
+}
+
+/* Entries List */
+.entries-container {
+  max-height: 35vh;
   overflow-y: auto;
   margin-bottom: var(--gap);
 }
-
 .entries {
   display: flex;
   flex-direction: column;
   gap: var(--gap);
 }
-
 .entry-chip {
   background: rgba(255,255,255,0.1);
   border-radius: var(--radius);
   padding: var(--gap);
   transition: transform 0.3s, opacity 0.3s;
 }
-
 .entry-chip.removing {
   transform: translateX(-100%);
   opacity: 0;
-@@ -223,41 +229,70 @@ body {
+}
+
+/* Suggestion */
+.suggestion {
+  text-align: center;
+  margin-bottom: var(--gap);
   font-size: var(--font-base);
 }
 
-/* Loading Mode Big Number */
-.yodel-status {
-  text-align: center;
 /* -----------------------------------------
    LOADING PAGE LAYOUT & STYLING
    ----------------------------------------- */
@@ -136,12 +242,6 @@
   margin-bottom: var(--gap);
 }
 
-.yodel-number {
-  font-size: 4rem;
-  font-weight: 700;
-  color: var(--neon-green);
-  display: block;
-  line-height: 1;
 /* 2. Make the +1 button enormous and full-width */
 #recordYodelBtn.full {
   width: 100%;
@@ -154,17 +254,13 @@
   margin-bottom: var(--gap);      /* spacing before Undo/Reset row */
 }
 
-/* Actions (Yodel) */
-.actions {
 /* 3. Layout Undo + Reset side-by-side */
 #yodelSection .actions {
   display: flex;
   gap: var(--gap);
   justify-content: center;
-  margin-top: var(--gap);
 }
 
-/* Modal Overlay & Panel */
 /* 4. Make Undo/Reset easy-tap pills */
 #undoYodelBtn,
 #resetYodelBtn {
@@ -191,25 +287,23 @@
    ----------------------------------------- */
 #modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.6);
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
 .modal {
   background: var(--modal-bg);
   color: var(--text-light);
-@@ -266,7 +301,6 @@ body {
+  padding: var(--gap);
+  border-radius: var(--radius);
   text-align: center;
   min-width: 200px;
 }
-
 .modal-actions {
   display: flex;
   gap: var(--gap);
+  justify-content: center;
+  margin-top: var(--gap);
+}
