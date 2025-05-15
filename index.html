@@ -1,59 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Epic Pallet Tracker</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Epic Pallet Tracker</title>
+<link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="app">
+<div class="app">
 
-    <!-- HOME -->
-    <section id="homeScreen" class="screen">
-      <div class="home-card">
+<!-- HOME -->
+<section id="homeScreen" class="screen">
+<div class="home-card">
         <button id="btnContainerHome" class="btn btn-container">Container</button>
-        <button id="btnYodelHome"     class="btn btn-loading">Loading</button>
-      </div>
-    </section>
+        <button id="btnYodelHome"    class="btn btn-loading">Loading</button>
+        <button id="btnContainerHome" class="btn btn-container">CONTAINER MODE</button>
+        <button id="btnYodelHome"    class="btn btn-loading">LOADING MODE</button>
+</div>
+</section>
 
-    <!-- CONTAINER MODE -->
-    <section id="containerSection" class="screen hidden">
-      <header class="header">
-        <button id="backFromContainer" class="btn-nav">&larr;</button>
-        <h2>Container Mode</h2>
-      </header>
+@@ -36,8 +35,6 @@ <h2>Container Mode</h2>
+</div>
 
-      <!-- 1) Two-Option Start Screen -->
-      <div id="containerStartOverlay" class="overlay">
-        <div class="overlay-card">
-          <button id="startNew"  class="mode-btn">➕ Start New</button>
-          <button id="viewSaved" class="mode-btn">📂 View Saved</button>
+<div id="containerUI" class="container-ui hidden">
+
+        <!-- STATUS BAR -->
+<div class="status-bar">
+<div><strong>Code:</strong><br/><span id="codeDisplay">–</span></div>
+<div><strong>Total:</strong><br/><span id="totalDisplay">0</span></div>
+@@ -46,18 +43,13 @@ <h2>Container Mode</h2>
+<div><strong>Pallets Left:</strong><br/><span id="palletsLeftDisplay">0</span></div>
+</div>
+
+        <!-- PALLET SIZE CHIPS + ADD-SIZE CHIP -->
+        <div id="sizesContainer" class="sizes" aria-label="Pallet Sizes">
+          <!-- JS will insert size chips AND a final "+ Size" chip -->
         </div>
-      </div>
+        <div id="sizesContainer" class="sizes" aria-label="Pallet Sizes"></div>
 
-      <!-- 2) Container Tabs -->
-      <div id="containerTabs" class="tabs"></div>
+        <!-- ENTRY ACTIONS -->
+<div class="entry-actions">
+<button id="undoEntryBtn"    class="btn">Undo</button>
+<button id="resetProductBtn" class="btn">Reset</button>
+</div>
 
-      <!-- 3–8) Main Container UI -->
-      <div id="containerUI" class="container-ui">
-        <!-- 4) Chips Grid -->
-        <div id="chipGrid" class="chip-grid"></div>
+        <!-- ENTRIES -->
+<div class="entries-container">
+<div id="entries" class="entries"></div>
+</div>
+@@ -69,20 +61,23 @@ <h2>Container Mode</h2>
+</section>
 
-        <!-- 3) Big + Pallet FAB -->
-        <button id="addPallet" class="fab">ADD PALLET</button>
-
-        <!-- 8) Reset with safety net -->
-        <div class="actions-bar">
-          <button id="resetContainer" class="btn-danger">Reset</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- YODEL MODE (unchanged) -->
+<!-- YODEL -->
     <section id="yodelSection" class="screen hidden">
       <header class="header">
-        <button id="backFromYodel" class="btn-nav">&larr;</button>
+        <button id="backFromYodel" class="btn" aria-label="Back">&larr;</button>
         <h2>Loading Mode</h2>
       </header>
       <div class="yodel-status">
@@ -65,8 +63,34 @@
         <button id="resetYodelBtn"  class="btn">Reset</button>
       </div>
     </section>
+<section id="yodelSection" class="screen hidden">
+  <header class="header">
+    <button id="backFromYodel" class="btn" aria-label="Back">&larr;</button>
+    <h2>Loading Mode</h2>
+  </header>
 
+  <div class="container-ui yodel-container">
+    <div></div>
+    <div class="yodel-status"><span id="yodelCountDisplay" class="yodel-number">0</span></div>
+    <button id="recordYodelBtn" class="btn btn-container full">+1</button>
+    <div class="actions-vertical">
+      <button id="undoYodelBtn"   class="btn">Undo</button>
+      <button id="resetYodelBtn"  class="btn">Reset</button>
+    </div>
   </div>
-  <script src="script.js"></script>
+</section>
+
+
+<!-- MODAL -->
+<div id="modalOverlay" class="hidden">
+@@ -97,6 +92,10 @@ <h3 id="modalTitle"></h3>
+</div>
+
+</div>
+
+  <!-- Offline/Online Pill -->
+  <div id="statusIndicator" class="status-indicator online">Online</div>
+
+<script src="script.js"></script>
 </body>
 </html>
