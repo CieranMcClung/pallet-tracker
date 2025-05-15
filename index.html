@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Epic Pallet Tracker</title>
   <link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="app">
@@ -13,60 +12,55 @@
     <!-- HOME -->
     <section id="homeScreen" class="screen">
       <div class="home-card">
-        <button id="btnContainerHome" class="btn btn-container">Container</button>
-        <button id="btnYodelHome"    class="btn btn-loading">Loading</button>
         <button id="btnContainerHome" class="btn btn-container">CONTAINER MODE</button>
         <button id="btnYodelHome"    class="btn btn-loading">LOADING MODE</button>
       </div>
     </section>
 
-@@ -36,8 +35,6 @@
+    <!-- CONTAINER -->
+    <section id="containerSection" class="screen hidden">
+      <header class="header">
+        <button id="backFromContainer" class="btn" aria-label="Back">&larr;</button>
+        <h2>Container Mode</h2>
+      </header>
+
+      <div class="product-controls">
+        <select id="productSelect" class="dropdown" aria-label="Select Product"></select>
+        <button id="addProductBtn" class="btn" aria-haspopup="dialog">+ Product</button>
+        <button id="newContainerBtn" class="btn">New Container</button>
+      </div>
+
+      <div id="containerEmpty" class="empty">
+        No products—tap “+ Product” to begin.
       </div>
 
       <div id="containerUI" class="container-ui hidden">
-
-        <!-- STATUS BAR -->
         <div class="status-bar">
           <div><strong>Code:</strong><br/><span id="codeDisplay">–</span></div>
           <div><strong>Total:</strong><br/><span id="totalDisplay">0</span></div>
-@@ -46,18 +43,13 @@
+          <div><strong>Left:</strong><br/><span id="leftDisplay">0</span></div>
+          <div><strong>Pallets:</strong><br/><span id="palletsDisplay">0</span></div>
           <div><strong>Pallets Left:</strong><br/><span id="palletsLeftDisplay">0</span></div>
         </div>
 
-        <!-- PALLET SIZE CHIPS + ADD-SIZE CHIP -->
-        <div id="sizesContainer" class="sizes" aria-label="Pallet Sizes">
-          <!-- JS will insert size chips AND a final "+ Size" chip -->
-        </div>
         <div id="sizesContainer" class="sizes" aria-label="Pallet Sizes"></div>
 
-        <!-- ENTRY ACTIONS -->
         <div class="entry-actions">
           <button id="undoEntryBtn"    class="btn">Undo</button>
           <button id="resetProductBtn" class="btn">Reset</button>
         </div>
 
-        <!-- ENTRIES -->
         <div class="entries-container">
           <div id="entries" class="entries"></div>
         </div>
-@@ -69,20 +61,23 @@
+
+        <div class="suggestion">
+          Next best: <span id="suggestion">–</span>
+        </div>
+      </div>
     </section>
 
     <!-- YODEL -->
-    <section id="yodelSection" class="screen hidden">
-      <header class="header">
-        <button id="backFromYodel" class="btn" aria-label="Back">&larr;</button>
-        <h2>Loading Mode</h2>
-      </header>
-      <div class="yodel-status">
-        <span id="yodelCountDisplay" class="yodel-number">0</span>
-      </div>
-      <div class="actions">
-        <button id="recordYodelBtn" class="btn btn-container full">+1</button>
-        <button id="undoYodelBtn"   class="btn">Undo</button>
-        <button id="resetYodelBtn"  class="btn">Reset</button>
-      </div>
-    </section>
 <section id="yodelSection" class="screen hidden">
   <header class="header">
     <button id="backFromYodel" class="btn" aria-label="Back">&larr;</button>
@@ -87,7 +81,14 @@
 
     <!-- MODAL -->
     <div id="modalOverlay" class="hidden">
-@@ -97,6 +92,10 @@
+      <div class="modal" role="dialog" aria-modal="true">
+        <h3 id="modalTitle"></h3>
+        <input id="modalInput" />
+        <div class="modal-actions">
+          <button id="modalCancel" class="btn">Cancel</button>
+          <button id="modalOk"     class="btn">OK</button>
+        </div>
+      </div>
     </div>
 
   </div>
