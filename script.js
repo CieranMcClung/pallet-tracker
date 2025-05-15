@@ -1,96 +1,98 @@
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Epic Pallet Tracker</title>
-<link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-</head>
-<body>
-<div class="app">
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .catch(err => console.error('SW failed:', err));
+  });
+}
 
-<!-- HOME -->
-<section id="homeScreen" class="screen">
-<div class="home-card">
-        <button id="btnContainerHome" class="btn btn-container">Container</button>
-        <button id="btnYodelHome"    class="btn btn-loading">Loading</button>
-        <button id="btnContainerHome" class="btn btn-container">CONTAINER MODE</button>
-        <button id="btnYodelHome"    class="btn btn-loading">LOADING MODE</button>
-</div>
-</section>
+// Online/Offline indicator
+const statusEl = document.getElementById('statusIndicator');
+function updateStatus() {
+  if (navigator.onLine) {
+    statusEl.textContent = 'Online';
+    statusEl.classList.remove('offline');
+  } else {
+    statusEl.textContent = 'Offline';
+    statusEl.classList.add('offline');
+  }
+}
+window.addEventListener('online',  updateStatus);
+window.addEventListener('offline', updateStatus);
+updateStatus();
 
-@@ -36,8 +35,6 @@ <h2>Container Mode</h2>
-</div>
+// — State —
+let container  = JSON.parse(localStorage.getItem('container')) || { products: [], currentIndex: 0 };
+let yodelCount = parseInt(localStorage.getItem('yodelCount')) || 0;
+@@ -39,11 +62,11 @@ const modalCancel  = document.getElementById('modalCancel');
+const modalOk      = document.getElementById('modalOk');
+let   modalResolve;
 
-<div id="containerUI" class="container-ui hidden">
+// — Persistence —
+// Persistence
+const saveContainer = ()=> localStorage.setItem('container', JSON.stringify(container));
+const saveYodel     = ()=> localStorage.setItem('yodelCount', yodelCount);
 
-        <!-- STATUS BAR -->
-<div class="status-bar">
-<div><strong>Code:</strong><br/><span id="codeDisplay">–</span></div>
-<div><strong>Total:</strong><br/><span id="totalDisplay">0</span></div>
-@@ -46,18 +43,13 @@ <h2>Container Mode</h2>
-<div><strong>Pallets Left:</strong><br/><span id="palletsLeftDisplay">0</span></div>
-</div>
+// — Navigation & Init —
+// Navigation & Init
+document.getElementById('btnContainerHome').onclick = () => {
+  homeScreen.classList.add('hidden');
+  containerSection.classList.remove('hidden');
+@@ -63,7 +86,7 @@ document.getElementById('backFromYodel').onclick = () => {
+  homeScreen.classList.remove('hidden');
+};
 
-        <!-- PALLET SIZE CHIPS + ADD-SIZE CHIP -->
-        <div id="sizesContainer" class="sizes" aria-label="Pallet Sizes">
-          <!-- JS will insert size chips AND a final "+ Size" chip -->
-        </div>
-        <div id="sizesContainer" class="sizes" aria-label="Pallet Sizes"></div>
+// — Modal Helper —
+// Modal Helper
+function showModal({ title, placeholder, type }) {
+  modalTitle.textContent   = title;
+  modalInput.value         = '';
+@@ -76,7 +99,7 @@ function showModal({ title, placeholder, type }) {
+modalCancel.onclick = ()=> { modalOverlay.classList.add('hidden'); modalResolve(null); };
+modalOk.onclick     = ()=> { modalOverlay.classList.add('hidden'); modalResolve(modalInput.value); };
 
-        <!-- ENTRY ACTIONS -->
-<div class="entry-actions">
-<button id="undoEntryBtn"    class="btn">Undo</button>
-<button id="resetProductBtn" class="btn">Reset</button>
-</div>
+// — Container Logic —
+// Container Logic
+async function initContainer(){
+  renderProducts();
+  if (container.products.length) {
+@@ -127,7 +150,7 @@ async function addSize(){
+  saveContainer(); updateContainerUI();
+}
 
-        <!-- ENTRIES -->
-<div class="entries-container">
-<div id="entries" class="entries"></div>
-</div>
-@@ -69,20 +61,23 @@ <h2>Container Mode</h2>
-</section>
+// — Update UI —
+// Update UI
+function updateContainerUI(){
+  const p   = container.products[container.currentIndex];
+  const sum = p.entries.reduce((a,b)=>a+b,0);
+@@ -137,10 +160,9 @@ function updateContainerUI(){
+  totalDisplay.textContent        = p.target;
+  leftDisplay.textContent         = left;
 
-<!-- YODEL -->
-    <section id="yodelSection" class="screen hidden">
-      <header class="header">
-        <button id="backFromYodel" class="btn" aria-label="Back">&larr;</button>
-        <h2>Loading Mode</h2>
-      </header>
-      <div class="yodel-status">
-        <span id="yodelCountDisplay" class="yodel-number">0</span>
-      </div>
-      <div class="actions">
-        <button id="recordYodelBtn" class="btn btn-container full">+1</button>
-        <button id="undoYodelBtn"   class="btn">Undo</button>
-        <button id="resetYodelBtn"  class="btn">Reset</button>
-      </div>
-    </section>
-<section id="yodelSection" class="screen hidden">
-  <header class="header">
-    <button id="backFromYodel" class="btn" aria-label="Back">&larr;</button>
-    <h2>Loading Mode</h2>
-  </header>
+  // pallet projections
+  const size = p.sizes[0] || 1;
+  const needed    = Math.ceil(p.target / size);
+  const leftP     = Math.ceil(left / size);
+  const size    = p.sizes[0] || 1;
+  const needed  = Math.ceil(p.target / size);
+  const leftP   = Math.ceil(left / size);
+  palletsDisplay.textContent      = needed;
+  palletsLeftDisplay.textContent  = leftP;
 
-  <div class="container-ui yodel-container">
-    <div></div>
-    <div class="yodel-status"><span id="yodelCountDisplay" class="yodel-number">0</span></div>
-    <button id="recordYodelBtn" class="btn btn-container full">+1</button>
-    <div class="actions-vertical">
-      <button id="undoYodelBtn"   class="btn">Undo</button>
-      <button id="resetYodelBtn"  class="btn">Reset</button>
-    </div>
-  </div>
-</section>
+@@ -160,7 +182,6 @@ function renderSizes(sizes){
+    btn.onclick     = ()=> addEntry(sz);
+    sizesContainer.appendChild(btn);
+  });
+  // final "+ Size" chip
+  const add = document.createElement('button');
+  add.className   = 'chip';
+  add.textContent = '+ Size';
+@@ -216,7 +237,7 @@ function renderSuggestion(sizes,left){
+  suggestionEl.textContent = best||'–';
+}
 
-
-<!-- MODAL -->
-<div id="modalOverlay" class="hidden">
-@@ -97,6 +92,10 @@ <h3 id="modalTitle"></h3>
-</div>
-
-</div>
-
-  <!-- Offline/Online Pill -->
-  <div id="statusIndicator" class="status-indicator online">Online</div>
-
-<script src="script.js"></script>
-</body>
-</html>
+// — Yodel Logic —
+// Yodel Logic
+recordYodelBtn.onclick = ()=>{
+  yodelCount++; saveYodel(); updateYodelUI();
+};
