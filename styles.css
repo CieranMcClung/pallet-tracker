@@ -1,52 +1,134 @@
-/*-----------------------------------------------
-  Design Tokens & Base Styles
------------------------------------------------*/
+/* -----------------------------------------
+   Online/Offline Indicator (bottom-right)
+   ----------------------------------------- */
+#statusIndicator {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--neon-blue);
+  color: var(--text-dark);
+  z-index: 1000;
+  transition: background 0.3s;
+}
+#statusIndicator.offline {
+  background: var(--neon-pink);
+}
+
+/* -----------------------------------------
+   Your Existing Variables & Base Styles
+   ----------------------------------------- */
 :root {
-  /* Colors */
+  /* Base Colors & Sizes */
   --bg-gradient: linear-gradient(135deg, #0d0f12, #1a1e26);
-  --glass-bg:    rgba(255,255,255,0.25);
-  --modal-bg:    rgba(16,18,23,0.95);
-  --text-light:  #e0e6f3;
-  --text-dark:   #101217;
-  --neon-blue:   #00e5ff;
-  --neon-pink:   #ff1ec1;
-  --neon-green:  #39ff14;
-
-  /* Layout & Type */
-  --transition: 0.3s ease;
-  --radius:     16px;
-  --gap:        12px;
-  --touch:      60px;
-  --font-base:  1.1rem;
-  --font-lg:    1.3rem;
+@@ -70,13 +93,8 @@ body {
+  transition: transform var(--transition);
 }
 
-* { box-sizing: border-box; margin:0; padding:0; }
+.btn:hover {
+  transform: translateY(-2px);
+}
 
-body {
-  background: var(--bg-gradient);
-  color: var(--text-light);
-  font-family: 'Roboto', sans-serif;
+.btn:active {
+  transform: scale(0.98);
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: scale(0.98); }
+
+.btn-container {
+  background: var(--neon-blue);
+@@ -95,17 +113,14 @@ body {
+}
+
+/* Hidden Utility */
+.hidden {
+  display: none !important;
+}
+.hidden { display: none !important; }
+
+/* Headers */
+.header {
   display: flex;
-  justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  margin-bottom: var(--gap);
 }
 
-.app {
-  width: 100%;
-  max-width: 480px;
+.header h2 {
+  flex: 1;
+  text-align: center;
+@@ -120,7 +135,6 @@ body {
+  justify-content: center;
+  margin-bottom: var(--gap);
+}
+
+.product-controls .dropdown {
+  flex: 1;
+  min-height: var(--touch);
+@@ -149,10 +163,7 @@ body {
+  font-size: var(--font-base);
+  font-weight: 600;
+}
+
+.status-bar span {
+  font-size: var(--font-lg);
+}
+.status-bar span { font-size: var(--font-lg); }
+
+/* Sizes Chips */
+.sizes {
+@@ -161,7 +172,6 @@ body {
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+.chip {
+  background: rgba(255,255,255,0.1);
+  border-radius: var(--radius);
+@@ -172,7 +182,6 @@ body {
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.chip:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+@@ -197,20 +206,17 @@ body {
+  overflow-y: auto;
+  margin-bottom: var(--gap);
+}
+
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.entry-chip {
+  background: rgba(255,255,255,0.1);
+  border-radius: var(--radius);
   padding: var(--gap);
+  transition: transform 0.3s, opacity 0.3s;
 }
 
-/*-----------------------------------------------
-  Glass Panels
------------------------------------------------*/
-.screen,
-.home-card,
-.container-ui,
-.overlay-card,
-.tabs {
+.entry-chip.removing {
+  transform: translateX(-100%);
+  opacity: 0;
+@@ -223,41 +229,70 @@ body {
+  font-size: var(--font-base);
+}
+
+/* Loading Mode Big Number */
+.yodel-status {
+  text-align: center;
+/* -----------------------------------------
+   LOADING PAGE LAYOUT & STYLING
+   ----------------------------------------- */
+
+#yodelSection .yodel-status,
+#yodelSection .actions {
   background: var(--glass-bg);
   border-radius: var(--radius);
   backdrop-filter: blur(12px);
@@ -54,236 +136,80 @@ body {
   margin-bottom: var(--gap);
 }
 
-/*-----------------------------------------------
-  Home Screen Card
------------------------------------------------*/
-.home-card {
-  display: flex;
-  gap: var(--gap);
-  justify-content: center;
-}
-
-/*-----------------------------------------------
-  Buttons
------------------------------------------------*/
-.btn, .btn-nav, .btn-danger {
-  border: none;
-  border-radius: var(--radius);
-  padding: 12px var(--gap);
-  min-height: var(--touch);
-  font-size: var(--font-base);
-  font-weight: 500;
-  cursor: pointer;
-  transition: transform var(--transition);
-}
-.btn:hover, .btn-nav:hover, .btn-danger:hover { transform: scale(1.02); }
-.btn:active, .btn-nav:active, .btn-danger:active { transform: scale(0.98); }
-
-/* Modified Nav button */
-.btn-nav {
-  background: transparent;
-  color: var(--text-light);
-  font-size: var(--font-lg);
-}
-
-/* Neon variants */
-.btn-container {
-  background: var(--neon-blue);
+.yodel-number {
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--neon-green);
+  display: block;
+  line-height: 1;
+/* 2. Make the +1 button enormous and full-width */
+#recordYodelBtn.full {
+  width: 100%;
+  min-height: 80px;               /* extra tall for big thumbs */
+  font-size: 2rem;                /* big label */
+  padding: 0;                     /* reset your standard padding */
+  background: var(--neon-blue);   
   color: var(--text-dark);
   box-shadow: 0 0 8px var(--neon-blue);
-}
-.btn-loading {
-  background: var(--neon-pink);
-  color: var(--text-dark);
-  box-shadow: 0 0 8px var(--neon-pink);
+  margin-bottom: var(--gap);      /* spacing before Undo/Reset row */
 }
 
-/* Danger button (Reset) */
-.btn-danger {
-  background: var(--neon-pink);
-  color: #101217;
-  font-weight: 600;
-}
-
-/* Utility */
-.full { width: 100%; }
-.hidden { display: none !important; }
-
-/*-----------------------------------------------
-  Headers
------------------------------------------------*/
-.header {
+/* Actions (Yodel) */
+.actions {
+/* 3. Layout Undo + Reset side-by-side */
+#yodelSection .actions {
   display: flex;
-  align-items: center;
-  margin-bottom: var(--gap);
+  gap: var(--gap);
+  justify-content: center;
+  margin-top: var(--gap);
 }
-.header h2 {
+
+/* Modal Overlay & Panel */
+/* 4. Make Undo/Reset easy-tap pills */
+#undoYodelBtn,
+#resetYodelBtn {
   flex: 1;
-  text-align: center;
-  font-size: var(--font-lg);
-}
-
-/*-----------------------------------------------
-  Product Controls (unchanged)
------------------------------------------------*/
-.product-controls { /* … your existing rules … */ }
-.product-controls .dropdown { /* … */ }
-
-/*-----------------------------------------------
-  Empty State (unchanged)
------------------------------------------------*/
-.empty { /* … */ }
-
-/*-----------------------------------------------
-  Status Bar (unchanged)
------------------------------------------------*/
-.status-bar { /* … */ }
-.status-bar span { /* … */ }
-
-/*-----------------------------------------------
-  Sizes Chips (unchanged)
------------------------------------------------*/
-.sizes { /* … */ }
-.chip { /* … */ }
-
-/*-----------------------------------------------
-  Entry Actions (unchanged)
------------------------------------------------*/
-.entry-actions { /* … */ }
-
-/*-----------------------------------------------
-  Entries List (unchanged)
------------------------------------------------*/
-.entries-container { /* … */ }
-.entries { /* … */ }
-.entry-chip { /* … */ }
-
-/*-----------------------------------------------
-  Suggestion (unchanged)
------------------------------------------------*/
-.suggestion { /* … */ }
-
-/*-----------------------------------------------
-  Loading Mode & Modal (unchanged)
------------------------------------------------*/
-.yodel-status { /* … */ }
-.yodel-number { /* … */ }
-.actions { /* … */ }
-#modalOverlay { /* … */ }
-.modal { /* … */ }
-.modal-actions { /* … */ }
-
-/*-----------------------------------------------
-  1) Overlay for Two-Option Start Screen
------------------------------------------------*/
-.overlay {
-  position: absolute;
-  top:0; left:0; right:0; bottom:0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-.overlay-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-}
-
-.mode-btn {
   min-height: 60px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  border: none;
+  font-size: 1rem;
   border-radius: var(--radius);
-  color: var(--text-dark);
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.mode-btn:first-child { background: var(--neon-blue); }
-.mode-btn:last-child  { background: var(--neon-pink); }
-.mode-btn:hover       { background: #ffffff; }
-
-/*-----------------------------------------------
-  2) Container Tabs
------------------------------------------------*/
-.tabs {
-  display: flex;
-  gap: 4px;
-  overflow-x: auto;
-  padding: 0 var(--gap);
-}
-.tabs .tab {
-  padding: 8px 12px;
-  border-radius: var(--radius) var(--radius) 0 0;
-  background: rgba(255,255,255,0.1);
-  cursor: pointer;
-  white-space: nowrap;
-  font-weight: 600;
-}
-.tabs .tab.active {
-  background: var(--neon-blue);
-  color: var(--text-dark);
+  background: var(--glass-bg);
+  color: var(--text-light);
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.2);
 }
 
-/*-----------------------------------------------
-  4) Chip Grid
------------------------------------------------*/
-.chip-grid {
-  display: grid;
-  gap: var(--gap);
-  padding: var(--gap);
-  grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
+/* 5. Tuck the status number into its own glass panel above */
+#yodelSection .yodel-status {
+  text-align: center;
 }
-
-/*-----------------------------------------------
-  3) FAB “ADD PALLET”
------------------------------------------------*/
-.fab {
-  position: sticky;
-  bottom: var(--gap);
-  width: calc(100% - 2 * var(--gap));
-  margin: 0 var(--gap);
-  height: 56px;
-  font-size: 1.2rem;
+#yodelSection .yodel-number {
+  font-size: 4rem;
   font-weight: 700;
-  border: none;
-  border-radius: var(--radius);
-  background: var(--neon-green);
-  color: var(--text-dark);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  cursor: pointer;
-  z-index: 10;
+  color: var(--neon-green);
 }
-
-/*-----------------------------------------------
-  8) Actions Bar (Reset)
------------------------------------------------*/
-.actions-bar {
+/* -----------------------------------------
+   MODAL (unchanged)
+   ----------------------------------------- */
+#modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
   display: flex;
   justify-content: center;
-  padding: var(--gap);
+  align-items: center;
 }
 
-/*-----------------------------------------------
-  8) Toast Feedback
------------------------------------------------*/
-.toast {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: rgba(0,0,0,0.8);
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 8px;
-  opacity: 0;
-  transition: opacity 0.3s, transform 0.3s;
-  z-index: 1000;
+.modal {
+  background: var(--modal-bg);
+  color: var(--text-light);
+@@ -266,7 +301,6 @@ body {
+  text-align: center;
+  min-width: 200px;
 }
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
+
+.modal-actions {
+  display: flex;
+  gap: var(--gap);
