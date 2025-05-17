@@ -1,0 +1,38 @@
+[
+  {
+    "id": "tpl_rs90_example",
+    "name": "RS90 High Volume",
+    "description": "Template for RS90 SKU based on example packing.",
+    "predefinedSkus": [
+      {
+        "code": "RS90",
+        "target": 1094,
+        "capacities": [
+          69,
+          60
+        ],
+        "palletBuildInfo": {
+          "text": "Cap 69: 3 layers × 23 high.\nCap 60: 3 layers × 20 high."
+        }
+      }
+    ]
+  },
+  {
+    "id": "tpl_tab26_example",
+    "name": "TAB26 Standard",
+    "description": "Template for TAB26 SKU with two pallet types.",
+    "predefinedSkus": [
+      {
+        "code": "TAB26",
+        "target": 1144,
+        "capacities": [
+          26,
+          30
+        ],
+        "palletBuildInfo": {
+          "text": "Pallet A: 26 units/pallet.\nPallet B: 30 units/pallet."
+        }
+      }
+    ]
+  }
+]

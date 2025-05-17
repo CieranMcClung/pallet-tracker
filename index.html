@@ -1,101 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Metadata for the page -->
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Epic Pallet Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pallet Tracker</title>
+  <!-- Links to stylesheets and other resources -->
   <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
 <body>
-  <div class="app">
+  <!-- Application shell -->
+  <div class="app-shell">
 
-    <!-- HOME -->
-    <section id="homeScreen" class="screen">
-      <div class="home-card">
-        <button id="btnContainerHome" class="btn btn-container">CONTAINER MODE</button>
-        <button id="btnYodelHome"    class="btn btn-loading">LOADING MODE</button>
-      </div>
-    </section>
+    <!-- Header section -->
+    <header class="app-header">
+      <!-- Navigation toggle button -->
+      <button id="navToggleBtn" class="btn-icon nav-toggle-btn" aria-label="Toggle Navigation" aria-expanded="false">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <!-- Application title -->
+      <h1 id="appTitle" class="app-title-text">Pallet Tracker</h1>
+      <!-- Theme toggle button -->
+      <button id="themeToggleBtn" class="btn-icon theme-toggle-btn" aria-label="Toggle Theme">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+    </header>
 
-    <!-- CONTAINER -->
-    <section id="containerSection" class="screen hidden">
-      <header class="header">
-        <button id="backFromContainer" class="btn" aria-label="Back">&larr;</button>
-        <h2>Container Mode</h2>
-      </header>
+    <!-- Side navigation menu -->
+    <nav id="sideNav" class="side-navigation" aria-label="Main Navigation">
+        <!-- Plan & Pack navigation item -->
+        <button id="btnPlanAndPackNav" class="nav-item active" data-screen="planAndPackScreen">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            Plan & Pack
+        </button>
+        <!-- Quick Count navigation item -->
+        <button id="btnQuickCountNav" class="nav-item" data-screen="quickCountScreen">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Quick Count
+        </button>
+        <!-- Manage Templates navigation item -->
+        <button id="btnManageTemplatesNav" class="nav-item" data-screen="manageTemplatesScreen">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
+            Manage Templates
+        </button>
+    </nav>
+    <!-- Navigation overlay -->
+    <div id="navOverlay" class="nav-overlay"></div>
 
-      <div class="product-controls">
-        <select id="productSelect" class="dropdown" aria-label="Select Product"></select>
-        <button id="addProductBtn" class="btn" aria-haspopup="dialog">+ Product</button>
-        <button id="newContainerBtn" class="btn">New Container</button>
-      </div>
-
-      <div id="containerEmpty" class="empty">
-        No products—tap “+ Product” to begin.
-      </div>
-
-      <div id="containerUI" class="container-ui hidden">
-        <div class="status-bar">
-          <div><strong>Code:</strong><br/><span id="codeDisplay">–</span></div>
-          <div><strong>Total:</strong><br/><span id="totalDisplay">0</span></div>
-          <div><strong>Left:</strong><br/><span id="leftDisplay">0</span></div>
-          <div><strong>Pallets:</strong><br/><span id="palletsDisplay">0</span></div>
-          <div><strong>Pallets Left:</strong><br/><span id="palletsLeftDisplay">0</span></div>
+    <!-- Main content area -->
+    <main class="main-content">
+      <!-- Plan & Pack screen -->
+      <section id="planAndPackScreen" class="screen active-screen">
+        <!-- Screen header -->
+        <div class="screen-header">
+            <h2>Plan & Pack</h2>
+            <div class="screen-header-actions"> 
+                <!-- New Shipment button -->
+                <button id="newShipmentBtn" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    New Shipment
+                </button>
+                <!-- Create from Template button -->
+                <button id="createFromTemplateBtn" class="btn btn-secondary"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>
+                    New from Template
+                </button>
+            </div>
+        </div>
+        
+        <!-- Controls group -->
+        <div class="controls-group">
+          <select id="shipmentSelect" class="select-field" aria-label="Select Shipment" style="display: none;"></select>
+          <button id="deleteShipmentBtn" class="btn btn-danger btn-small" style="flex-grow: 0;"> 
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            Delete Current
+          </button>
+          <div class="form-field">
+            <label for="skuSearchInput" class="sr-only">Search SKUs</label>
+            <input type="text" id="skuSearchInput" placeholder="Search or Select SKU..." class="input-field" disabled/>
+            <div class="input-adornment">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+          </div>
+          <select id="skuSelect" class="select-field" aria-label="Select SKU" disabled></select>
+          <div id="skuSelectEmptyState" class="empty-state-inline hidden">No SKUs in this shipment. Use "Add SKU".</div>
+          <button id="addSkuBtn" class="btn btn-secondary" aria-haspopup="dialog" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add SKU
+          </button>
         </div>
 
-        <div id="sizesContainer" class="sizes" aria-label="Pallet Sizes"></div>
-
-        <div class="entry-actions">
-          <button id="undoEntryBtn"    class="btn">Undo</button>
-          <button id="resetProductBtn" class="btn">Reset</button>
+        <div id="shipmentProgressContainer" class="progress-bar-container hidden">
+            <div class="progress-bar-label" id="shipmentProgressLabel">Shipment Progress (<span id="shipmentNameForProgress"></span>): <span id="shipmentProgressText">0%</span></div>
+            <div class="progress-bar" 
+                 role="progressbar" 
+                 aria-labelledby="shipmentProgressLabel"
+                 aria-valuenow="0" 
+                 aria-valuemin="0" 
+                 aria-valuemax="100">
+                <div id="shipmentProgressBarFill" class="progress-bar-fill"></div>
+            </div>
         </div>
 
-        <div class="entries-container">
-          <div id="entries" class="entries"></div>
+        <div id="shipmentEmptyState" class="empty-state hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14M16.5 9.4l-9 5.18M22 12v8M12 12v8M4.5 10.5l7.5 4.33M19 12.25A2.25 2.25 0 0 1 21.25 10H22v8h-2.75a2.25 2.25 0 0 1-2.25-2.25V12.25Z"></path><path d="m3.12 10 8.88-5.14L20.94 10"></path><path d="M12 22V12"></path></svg>
+          <p>No active shipment.</p>
+          <p>Create a "New Shipment" to begin.</p>
         </div>
 
-        <div class="suggestion">
-          Next best: <span id="suggestion">–</span>
+        <div id="skuPackingUI" class="sku-packing-ui hidden">
+          <div class="status-grid">
+            <div class="status-item"><span class="label">SKU Code</span><span id="codeDisplay" class="value"></span></div>
+            <div class="status-item"><span class="label">Target Units</span><span id="totalDisplay" class="value"></span></div>
+            <div class="status-item"><span class="label">Units Left</span><span id="leftDisplay" class="value attention-value"></span></div>
+            <div class="status-item"><span class="label">Pallets Used</span><span id="palletsDisplay" class="value"></span></div>
+            <div class="status-item"><span class="label">Pallets Left</span><span id="palletsLeftDisplay" class="value"></span></div>
+          </div>
+
+          <div class="progress-bar-container sku-progress-specific">
+            <div class="progress-bar-label" id="skuProgressLabel">SKU Progress: <span id="skuProgressText">0%</span></div>
+            <div class="progress-bar"
+                 role="progressbar"
+                 aria-labelledby="skuProgressLabel"
+                 aria-valuenow="0"
+                 aria-valuemin="0"
+                 aria-valuemax="100">
+                <div id="skuProgressBarFill" class="progress-bar-fill"></div>
+            </div>
+          </div>
+
+          <div class="pallet-capacities"> 
+            <h3 class="subsection-title">Pallet Capacities (Units/Pallet)</h3>
+            <div id="palletCapacitiesContainer" class="chips-container">
+            </div>
+          </div>
+          
+          <div id="packingSuggestion" class="suggestion-box">
+            <span class="label">Suggestion:</span>
+            <span id="suggestionText" class="value"></span>
+          </div>
+
+          <div class="entry-log-section">
+             <div class="entry-actions">
+                <h3 class="subsection-title">Packed Pallets Log</h3>
+                <div> 
+                    <button id="undoEntryBtn" class="btn btn-icon-text btn-small">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path></svg>
+                        Undo Last
+                    </button>
+                    <button id="resetSkuBtn" class="btn btn-icon-text btn-danger btn-small">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                        Reset SKU
+                    </button>
+                </div>
+            </div>
+            <div class="entries-scroller">
+              <ul id="entriesLog" class="entries-list"></ul>
+            </div>
+          </div>
         </div>
+      </section>
+
+      <!-- Quick Count screen -->
+      <section id="quickCountScreen" class="screen">
+        <div class="screen-header">
+            <h2>Quick Count</h2>
+        </div>
+        <div class="quick-count-ui">
+          <div id="quickCountDisplay" class="counter-display">0</div>
+          <button id="recordQuickCountBtn" class="btn btn-primary btn-xlarge">+1 Unit</button>
+          <div class="quick-count-actions">
+            <button id="undoQuickCountBtn" class="btn btn-secondary btn-icon-text">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path></svg>
+                Undo
+            </button>
+            <button id="resetQuickCountBtn" class="btn btn-danger btn-icon-text">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                Reset
+            </button>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Manage Templates screen -->
+      <section id="manageTemplatesScreen" class="screen">
+        <div class="screen-header">
+            <h2>Manage Shipment Templates</h2>
+        </div>
+        <div id="templatesListContainer" class="templates-list-container">
+        </div>
+        <div id="noTemplatesState" class="empty-state hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
+            <p>No templates created yet.</p>
+            <p>Click "Create New" or "Import" to get started.</p>
+            <button id="initiateCreateTemplateBtnScreen" class="btn btn-primary">Create New</button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Modal overlay -->
+    <div id="modalOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitleText">
+      <!-- Modal dialog -->
+      <div id="modalDialog" class="modal-dialog">
+        <header class="modal-header">
+          <h3 id="modalTitleText" class="modal-title">Dialog Title</h3>
+          <button id="modalCloseBtn" class="btn-icon modal-close-btn" aria-label="Close Modal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </header>
+        <div class="modal-content">
+          <p id="modalPrompt" class="modal-prompt"></p>
+          <input type="text" id="modalInput" class="input-field hidden" />
+          <div id="modalCustomContent" class="modal-custom-content"></div>
+          <p id="modalError" class="modal-error-message hidden"></p>
+        </div>
+        <footer class="modal-actions">
+          <button id="modalCancelBtn" class="btn btn-secondary">Cancel</button>
+          <button id="modalConfirmBtn" class="btn btn-primary">Confirm</button> 
+        </footer>
       </div>
-    </section>
-
-    <!-- YODEL -->
-<section id="yodelSection" class="screen hidden">
-  <header class="header">
-    <button id="backFromYodel" class="btn" aria-label="Back">&larr;</button>
-    <h2>Loading Mode</h2>
-  </header>
-
-  <div class="container-ui yodel-container">
-    <div></div>
-    <div class="yodel-status"><span id="yodelCountDisplay" class="yodel-number">0</span></div>
-    <button id="recordYodelBtn" class="btn btn-container full">+1</button>
-    <div class="actions-vertical">
-      <button id="undoYodelBtn"   class="btn">Undo</button>
-      <button id="resetYodelBtn"  class="btn">Reset</button>
     </div>
+
+    <!-- Network status indicator -->
+    <div id="networkStatusIndicator" class="network-status online">Online</div>
   </div>
-</section>
-
-
-    <!-- MODAL -->
-    <div id="modalOverlay" class="hidden">
-      <div class="modal" role="dialog" aria-modal="true">
-        <h3 id="modalTitle"></h3>
-        <input id="modalInput" />
-        <div class="modal-actions">
-          <button id="modalCancel" class="btn">Cancel</button>
-          <button id="modalOk"     class="btn">OK</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Offline/Online Pill -->
-  <div id="statusIndicator" class="status-indicator online">Online</div>
-
   <script src="script.js"></script>
 </body>
 </html>
