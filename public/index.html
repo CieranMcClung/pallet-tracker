@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pallet Tracker Pro</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="palletLocatorPlus.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon.ico" sizes="any">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+</head>
+<body>
+  <div class="app-shell">
+
+    <header class="app-header">
+      <button id="navToggleBtn" class="btn-icon nav-toggle-btn" aria-label="Toggle Navigation" aria-expanded="false" title="Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <h1 id="appTitle" class="app-title-text">Pallet Tracker Pro</h1>
+      <div class="header-actions-container">
+        <div id="networkStatusIndicator" class="network-status online" title="Network Connection Status">Online</div>
+        <button id="themeToggleBtnLight" class="btn-icon header-btn theme-toggle-btn light-mode-icon" aria-label="Switch to Dark Theme" title="Switch to Dark Theme">
+            <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+        <button id="themeToggleBtnDark" class="btn-icon header-btn theme-toggle-btn dark-mode-icon" aria-label="Switch to Light Theme" title="Switch to Light Theme">
+            <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <!-- Account button removed from here, now a nav item -->
+      </div>
+    </header>
+
+    <nav id="sideNav" class="side-navigation" aria-label="Main Navigation">
+        <button class="nav-item active" data-screen="dashboardScreen"> <!-- Default to dashboard -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Dashboard
+        </button>
+        <button class="nav-item" data-screen="planAndPackScreen">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            Plan & Pack
+        </button>
+        <button class="nav-item" data-screen="quickCountScreen">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Quick Count
+        </button>
+        <button class="nav-item" data-screen="manageTemplatesScreen">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
+            Templates
+        </button>
+        <button class="nav-item" data-screen="tasksScreen">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><line x1="12" y1="10" x2="12" y2="16"></line><line x1="9" y1="13" x2="15" y2="13"></line></svg>
+            Tasks
+        </button>
+        <button class="nav-item" data-screen="palletLocatorScreen">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Pallet Locator
+        </button>
+        <button class="nav-item" data-screen="settingsScreen">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09a1.65 1.65 0 0 0-1-.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09a1.65 1.65 0 0 0 .51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 .51 1.65 1.65 0 0 0 1.82-.33l.06.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V15a1.65 1.65 0 0 0 1.51 1z"></path></svg>
+            Settings
+        </button>
+        <button class="nav-item" data-screen="accountScreen">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Account
+        </button>
+    </nav>
+    <div id="navOverlay" class="nav-overlay"></div>
+
+    <main class="main-content">
+      <section id="dashboardScreen" class="screen active-screen">
+          <div class="screen-header"><h2>Dashboard</h2></div>
+          <div id="dashboardScreenContent">
+              <!-- Dashboard content will be injected by dashboard.js -->
+              <p>Loading dashboard...</p>
+          </div>
+      </section>
+
+      <section id="planAndPackScreen" class="screen">
+        <div class="screen-header">
+            <h2>Plan & Pack</h2>
+            <div class="screen-header-actions">
+                 <button id="newShipmentBtn" class="btn btn-primary" title="Create new empty shipment"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Shipment</button>
+                 <button id="createFromTemplateBtn" class="btn btn-secondary" title="Create shipment from template"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>From Template</button>
+                 <button id="finishShipmentBtn" class="btn btn-success hidden" title="Archive current shipment"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Finish Shipment</button>
+            </div>
+        </div>
+        
+        <div id="shipmentSelectionContainer" class="shipment-selection-container">
+            <div id="shipmentTabsContainer" class="shipment-tabs hidden"></div>
+            <select id="shipmentSelect" class="select-field" aria-label="Select Shipment"></select>
+        </div>
+
+        <div class="controls-group shipment-management-controls">
+            <button id="editShipmentDetailsBtn" class="btn btn-secondary btn-small btn-icon-text" title="Edit shipment name/driver/loader"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit Details</button>
+            <button id="saveAsTemplateBtn" class="btn btn-secondary btn-small btn-icon-text" title="Save shipment as template"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Save as Template</button>
+            <button id="deleteCurrentShipmentBtn" class="btn btn-danger btn-small btn-icon-text" title="Delete shipment"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>Delete Shipment</button>
+        </div>
+        <div id="shipmentArchivedMessage" class="archived-message hidden"><p><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> This shipment is archived (read-only).</p><button id="unarchiveShipmentBtn" class="btn btn-secondary btn-small">Reactivate</button></div>
+        <div id="shipmentDetailsDisplay" class="shipment-details-display hidden"><p><strong>Driver:</strong> <span id="displayForkliftDriver">Not Set</span> | <strong>Loader:</strong> <span id="displayLoaderName">Not Set</span></p><div id="shipmentTimeSection" class="shipment-time-section"><p><strong>Start Time:</strong> <span id="displayShipmentStartTime">Not Set</span><button id="setShipmentStartTimeBtn" class="btn btn-secondary btn-icon-text btn-very-small" title="Set/Edit Start Time"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span id="setShipmentStartTimeBtnText">Set Time</span></button></p><p id="startTimeMissingWarning" class="attention-text hidden">Start time required for packing & progress.</p></div></div>
+        <div id="shipmentHealthMeterContainer" class="health-meter-container hidden"><div class="health-meter-bar"><div id="shipmentHealthMeterFill" class="health-meter-fill gray"></div></div><div id="shipmentTimeInfo" class="health-meter-info"><span>Duration: <strong id="timeDuration">N/A</strong></span><span>Est. Finish: <strong id="estFinishTime">N/A</strong></span><span>Avg/Pallet: <strong id="avgTimePerPallet">N/A</strong></span><span>Time to Limit: <strong id="timeRemainingInLimit">N/A</strong></span></div><div id="shipmentHealthWarning" class="health-meter-warning hidden"></div></div>
+        <div id="shipmentProgressContainer" class="progress-bar-container hidden"><div class="progress-bar-label" id="shipmentProgressLabel">Shipment Progress (<span id="shipmentNameForProgress"></span>): <span id="shipmentProgressText">0%</span></div><div class="progress-bar" role="progressbar" aria-valuenow="0"><div id="shipmentProgressBarFill" class="progress-bar-fill"></div></div></div>
+        
+        <div class="controls-group sku-controls">
+            <div class="form-field sku-search-field">
+                <label for="skuSearchInput" class="sr-only">Search SKUs</label>
+                <input type="text" id="skuSearchInput" placeholder="Search or Select SKU..." class="input-field" disabled/>
+                <div class="input-adornment"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+            </div>
+            <button id="addSkuBtn" class="btn btn-secondary btn-add-sku btn-icon-text" disabled title="Add SKU"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add SKU</button>
+            <button id="editSelectedSkuBtn" class="btn btn-secondary btn-small btn-icon-text" disabled title="Edit selected SKU"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit SKU</button>
+            <button id="deleteSelectedSkuBtn" class="btn btn-danger btn-small btn-icon-text" disabled title="Delete selected SKU"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Delete SKU</button>
+        </div>
+        
+        <div id="skuSelectionInteractiveContainer" class="sku-selection-interactive-container">
+            <div id="skuTabsContainer" class="sku-tabs hidden"></div>
+            <select id="skuSelect" class="select-field hidden" aria-label="Select SKU"></select>
+            <div id="skuSelectEmptyState" class="empty-state-inline hidden">No SKUs in shipment.</div>
+        </div>
+
+        <div id="shipmentEmptyState" class="empty-state hidden"><svg viewBox="0 0 24 24" width="48" height="48"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14M16.5 9.4l-9 5.18M22 12v8M12 12v8M4.5 10.5l7.5 4.33M19 12.25A2.25 2.25 0 0 1 21.25 10H22v8h-2.75a2.25 2.25 0 0 1-2.25-2.25V12.25Z"/><path d="m3.12 10 8.88-5.14L20.94 10"/><path d="M12 22V12"/></svg><p>No active shipment.</p><p>Create or select one to begin.</p></div>
+        <div id="skuPackingUI" class="sku-packing-ui hidden"><div id="packingDisabledOverlay" class="packing-disabled-overlay hidden"><svg viewBox="0 0 24 24" width="32" height="32"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><p>Shipment start time required to pack.</p><button id="setStartTimeFromOverlayBtn" class="btn btn-primary btn-small">Set Start Time Now</button></div><div class="status-grid"><div class="status-item"><span class="label">SKU</span><span id="codeDisplay" class="value"></span></div><div class="status-item"><span class="label">Target</span><span id="totalDisplay" class="value"></span></div><div class="status-item"><span class="label">Left</span><span id="leftDisplay" class="value attention-value"></span></div><div class="status-item"><span class="label">Used</span><span id="palletsDisplay" class="value"></span></div><div class="status-item"><span class="label">Est. Left</span><span id="palletsLeftDisplay" class="value"></span></div></div><div class="progress-bar-container sku-progress-specific"><div class="progress-bar-label" id="skuProgressLabel">SKU Progress: <span id="skuProgressText">0%</span></div><div class="progress-bar" role="progressbar" aria-valuenow="0"><div id="skuProgressBarFill" class="progress-bar-fill"></div></div></div><div class="pallet-capacities"><h3 class="subsection-title">Pallet Capacities</h3><div id="palletCapacitiesContainer" class="chips-container"></div><div class="pallet-info"><p><strong>Selected:</strong> <span id="palletCapacityDisplay">N/A</span></p></div></div><div id="packingSuggestion" class="suggestion-box"><span class="label">Suggestion:</span><span id="suggestionText" class="value"></span></div><div class="entry-log-section"><div class="entry-actions"><h3 class="subsection-title">Packed Log</h3><div><button id="undoEntryBtn" class="btn btn-icon-text btn-small" title="Undo last entry"><svg viewBox="0 0 24 24"><path d="M21 7v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/></svg>Undo</button><button id="resetSkuBtn" class="btn btn-icon-text btn-danger btn-small" title="Clear entries for SKU"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Reset</button></div></div><div class="entries-scroller"><ul id="entriesLog" class="entries-list"></ul></div></div></div>
+      </section>
+
+      <section id="quickCountScreen" class="screen">
+        <div class="screen-header"><h2>Quick Count</h2><div class="screen-header-actions"><div class="form-field-inline"><label for="quickCountModeToggle">Mode:</label><select id="quickCountModeToggle" class="select-field select-field-small"><option value="basic">Basic</option><option value="advanced">Advanced</option></select></div></div></div>
+        <div class="quick-count-ui"><div id="quickCountDisplayContainer"><div class="quick-count-item"><span class="quick-count-label">Loaded Pallets</span><div id="quickCountDisplay" class="counter-display">0</div><button id="recordQuickCountBtn" class="btn btn-primary btn-xlarge" title="Add loaded pallet">+1 Pallet</button></div><div id="quickCountAdvancedSection" class="hidden"><div class="quick-count-item"><span class="quick-count-label">Return Pallets</span><div id="quickCountReturnsDisplay" class="counter-display small-counter">0</div><div class="quick-count-item-actions"><button id="decrementQuickCountReturnsBtn" class="btn btn-secondary" title="Decrement returns">-1</button><button id="incrementQuickCountReturnsBtn" class="btn btn-secondary" title="Increment returns">+1</button></div></div><div class="quick-count-item"><span class="quick-count-label">Collars</span><div id="quickCountCollarsDisplay" class="counter-display small-counter">0</div><div class="quick-count-item-actions"><button id="decrementQuickCountCollarsBtn" class="btn btn-secondary" title="Decrement Collars">-1</button><button id="incrementQuickCountCollarsBtn" class="btn btn-secondary" title="Increment Collars">+1</button></div></div></div></div><div class="quick-count-actions"><button id="undoQuickCountBtn" class="btn btn-secondary btn-icon-text" title="Remove last loaded pallet"><svg viewBox="0 0 24 24"><path d="M21 7v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/></svg>Undo</button><button id="resetQuickCountBtn" class="btn btn-danger btn-icon-text" title="Reset all counts"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Reset All</svgReset></button></div></div>
+      </section>
+
+      <section id="manageTemplatesScreen" class="screen">
+        <div class="screen-header"><h2>Manage Templates</h2><div class="screen-header-actions template-management-actions"><button id="initiateCreateTemplateBtnScreen" class="btn btn-primary btn-icon-text" title="Create new template"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create New</button><button id="importTemplatesBtn" class="btn btn-secondary btn-icon-text" title="Import templates"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import</button><button id="exportTemplatesBtn" class="btn btn-secondary btn-icon-text" title="Export all templates"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export All</button></div></div>
+        <div id="templatesListContainer" class="templates-list-container"></div>
+        <div id="noTemplatesState" class="empty-state hidden"><svg viewBox="0 0 24 24" width="48" height="48"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg><p>No templates found.</p><p>Create or Import to get started.</p></div>
+      </section>
+
+      <section id="tasksScreen" class="screen">
+          <div class="screen-header">
+            <h2>Tasks</h2>
+            <div class="screen-header-actions">
+                <button id="createNewTaskBtn" class="btn btn-primary btn-icon-text" title="Add new task">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Task
+                </button>
+            </div>
+          </div>
+          <div id="taskGlobalStatusMessage" class="settings-status-message hidden"></div>
+          <div class="task-controls-container controls-group">
+              <div class="form-field"><label for="taskSearchInput">Search Tasks</label><input type="search" id="taskSearchInput" class="input-field" placeholder="Title, description, tags..."></div>
+              <div class="form-field"><label for="taskFilterStatus">Status</label><select id="taskFilterStatus" class="select-field"><option value="all">All Statuses</option><option value="todo">To Do</option><option value="inprogress">In Progress</option><option value="completed">Completed</option><option value="onhold">On Hold</option></select></div>
+              <div class="form-field"><label for="taskFilterPriority">Priority</label><select id="taskFilterPriority" class="select-field"><option value="all">All Priorities</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="urgent">Urgent</option></select></div>
+              <div class="form-field"><label for="taskFilterDueDate">Due Date</label><input type="date" id="taskFilterDueDate" class="input-field"></div>
+              <div class="form-field"><label for="taskFilterAssignedTo">Assigned To</label><input type="text" id="taskFilterAssignedTo" class="input-field" placeholder="Assignee name..."></div>
+              <div class="form-field"><label for="taskFilterTags">Tags (comma-sep)</label><input type="text" id="taskFilterTags" class="input-field" placeholder="e.g., urgent, qc"></div>
+              <div class="form-field"><label for="taskFilterArchived">Archived</label><select id="taskFilterArchived" class="select-field"><option value="no" selected>Not Archived</option><option value="yes">Archived</option><option value="all">All (inc. Archived)</option></select></div>
+              <div class="form-field"><label for="taskSortSelect">Sort By</label><select id="taskSortSelect" class="select-field"><option value="createdAt_desc">Created: Newest</option><option value="createdAt_asc">Created: Oldest</option><option value="dueDate_asc">Due Date: Soonest</option><option value="dueDate_desc">Due Date: Latest</option><option value="priority_desc">Priority: Highest</option><option value="priority_asc">Priority: Lowest</option><option value="title_asc">Title: A-Z</option><option value="title_desc">Title: Z-A</option></select></div>
+          </div>
+          <div id="tasksListContainer" class="tasks-list-container"></div>
+          <div id="noTasksState" class="empty-state hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><line x1="12" y1="10" x2="12" y2="16"></line><line x1="9" y1="13" x2="15" y2="13"></line></svg>
+            <p>No tasks match your filters.</p>
+            <p>Try adjusting filters or create a "New Task".</p>
+          </div>
+      </section>
+
+      <section id="palletLocatorScreen" class="screen">
+        <!-- Content for Pallet Locator Plus will be injected by palletLocatorPlus.js -->
+      </section>
+
+      <section id="settingsScreen" class="screen">
+        <div class="screen-header"><h2>Settings</h2></div>
+        <div class="settings-content">
+            <div class="form-field-inline"><label for="settingsThemeToggleBtn">Theme:</label><button id="settingsThemeToggleBtn" class="btn btn-secondary btn-small">Toggle Theme</button></div>
+            <div class="form-field">
+                <label for="settingShipmentTimeLimit">Shipment Loading Time Limit (Hours)</label>
+                <input type="number" id="settingShipmentTimeLimit" class="input-field" min="1" max="24" step="0.5">
+            </div>
+            <button id="saveAppSettingsBtn" class="btn btn-primary">Save Settings</button>
+            <div id="settingsStatusMessage" class="settings-status-message hidden"></div>
+            <div class="version-info">App Version: <strong id="versionNumber">Loading...</strong></div>
+            <p class="settings-note">More settings coming soon.</p>
+        </div>
+      </section>
+
+      <section id="accountScreen" class="screen">
+          <div class="screen-header"><h2>Account</h2></div>
+          <div id="accountScreenContent">
+              <!-- Account content will be injected by accounts.js -->
+              <p>Loading account details...</p>
+          </div>
+      </section>
+    </main>
+
+    <div id="modalOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitleText">
+      <div id="modalDialog" class="modal-dialog">
+        <header class="modal-header"><h3 id="modalTitleText" class="modal-title">Dialog Title</h3><button id="modalCloseBtn" class="btn-icon modal-close-btn" aria-label="Close Modal" title="Close (Esc)"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></header>
+        <div class="modal-content"><p id="modalPrompt" class="modal-prompt"></p><input type="text" id="modalInput" class="input-field hidden" /><div id="modalCustomContent" class="modal-custom-content"></div><p id="modalError" class="modal-error-message hidden"></p></div>
+        <footer class="modal-actions"><button id="modalCancelBtn" class="btn btn-secondary">Cancel</button><button id="modalConfirmBtn" class="btn btn-primary">Confirm</button></footer>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="firebaseService.js"></script>
+  <script src="appState.js"></script>
+  <script src="domElements.js"></script>
+  <script src="utils.js"></script>
+  <script src="uiModal.js"></script>
+  <script src="featureTemplates.js"></script>
+  <script src="featurePlanPackShipments.js"></script>
+  <script src="featurePlanPackSkus.js"></script>
+  <script src="featureQuickCount.js"></script>
+  <script src="tasks.js"></script>
+  <script src="dashboard.js"></script> <!-- New -->
+  <script src="accounts.js"></script> <!-- New -->
+  <script src="uiMain.js"></script>
+  <script src="settings.js"></script>
+  <script src="mainScript.js"></script>
+  <script defer src="palletLocatorPlus.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        if (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('Service Worker: Registered', registration);
+                    registration.update(); 
+                    if (navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.controller.postMessage({ type: 'CHECK_SW_UPDATE' });
+                    }
+                })
+                .catch(err => console.error('Service Worker: Registration Failed', err));
+            
+            navigator.serviceWorker.addEventListener('message', event => {
+                if (event.data && event.data.type === 'SW_UPDATE_READY') {
+                    showModal({
+                        title: "Update Available!",
+                        prompt: (event.data.payload?.message || "A new version is ready.") + "\nRefresh to apply?",
+                        inputType: 'none',
+                        confirmButtonText: "Refresh Now",
+                        cancelButtonText: "Later"
+                    }).then(confirmed => {
+                        if (confirmed) {
+                            window.location.reload();
+                        }
+                    });
+                }
+            });
+        } else {
+            console.log('Service Worker not registered: not on HTTPS or localhost.');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
