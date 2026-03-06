@@ -1,233 +1,332 @@
-// — State —
-let container  = JSON.parse(localStorage.getItem('container')) || { products: [], currentIndex: 0 };
-let yodelCount = parseInt(localStorage.getItem('yodelCount')) || 0;
-
-// — Refs —
-const homeScreen        = document.getElementById('homeScreen');
-const containerSection  = document.getElementById('containerSection');
-const yodelSection      = document.getElementById('yodelSection');
-
-const productSelect     = document.getElementById('productSelect');
-const addProductBtn     = document.getElementById('addProductBtn');
-const newContainerBtn   = document.getElementById('newContainerBtn');
-const containerEmpty    = document.getElementById('containerEmpty');
-const containerUI       = document.getElementById('containerUI');
-
-const codeDisplay       = document.getElementById('codeDisplay');
-const totalDisplay      = document.getElementById('totalDisplay');
-const leftDisplay       = document.getElementById('leftDisplay');
-const palletsDisplay    = document.getElementById('palletsDisplay');
-const palletsLeftDisplay= document.getElementById('palletsLeftDisplay');
-
-const sizesContainer    = document.getElementById('sizesContainer');
-const undoEntryBtn      = document.getElementById('undoEntryBtn');
-const resetProductBtn   = document.getElementById('resetProductBtn');
-
-const entriesDiv        = document.getElementById('entries');
-const suggestionEl      = document.getElementById('suggestion');
-
-const recordYodelBtn    = document.getElementById('recordYodelBtn');
-const yodelCountDisplay = document.getElementById('yodelCountDisplay');
-const undoYodelBtn      = document.getElementById('undoYodelBtn');
-const resetYodelBtn     = document.getElementById('resetYodelBtn');
-
-// Modal
-const modalOverlay = document.getElementById('modalOverlay');
-const modalTitle   = document.getElementById('modalTitle');
-const modalInput   = document.getElementById('modalInput');
-const modalCancel  = document.getElementById('modalCancel');
-const modalOk      = document.getElementById('modalOk');
-let   modalResolve;
-
-// — Persistence —
-const saveContainer = ()=> localStorage.setItem('container', JSON.stringify(container));
-const saveYodel     = ()=> localStorage.setItem('yodelCount', yodelCount);
-
-// — Navigation & Init —
-document.getElementById('btnContainerHome').onclick = () => {
-  homeScreen.classList.add('hidden');
-  containerSection.classList.remove('hidden');
-  initContainer();
-};
-document.getElementById('btnYodelHome').onclick = () => {
-  homeScreen.classList.add('hidden');
-  yodelSection.classList.remove('hidden');
-  updateYodelUI();
-};
-document.getElementById('backFromContainer').onclick = () => {
-  containerSection.classList.add('hidden');
-  homeScreen.classList.remove('hidden');
-};
-document.getElementById('backFromYodel').onclick = () => {
-  yodelSection.classList.add('hidden');
-  homeScreen.classList.remove('hidden');
+// --- STATE MANAGEMENT (Uses LocalStorage) ---
+let appState = {
+    containers: [],
+    activeContainerId: null
 };
 
-// — Modal Helper —
-function showModal({ title, placeholder, type }) {
-  modalTitle.textContent   = title;
-  modalInput.value         = '';
-  modalInput.placeholder   = placeholder;
-  modalInput.type          = type;
-  modalOverlay.classList.remove('hidden');
-  setTimeout(() => modalInput.focus(), 50);
-  return new Promise(res => modalResolve = res);
-}
-modalCancel.onclick = ()=> { modalOverlay.classList.add('hidden'); modalResolve(null); };
-modalOk.onclick     = ()=> { modalOverlay.classList.add('hidden'); modalResolve(modalInput.value); };
-
-// — Container Logic —
-async function initContainer(){
-  renderProducts();
-  if (container.products.length) {
-    containerEmpty.classList.add('hidden');
-    containerUI.classList.remove('hidden');
-    updateContainerUI();
-  }
+// Load state from local storage on startup
+function loadState() {
+    const saved = localStorage.getItem('containerTrackerState');
+    if (saved) {
+        appState = JSON.parse(saved);
+    }
 }
 
-function renderProducts(){
-  productSelect.innerHTML = '';
-  container.products.forEach((p,i)=>{
-    let o = document.createElement('option');
-    o.value = i; o.textContent = p.code;
-    productSelect.appendChild(o);
-  });
-  productSelect.value = container.currentIndex;
-  containerEmpty.classList.toggle('hidden', container.products.length>0);
-  containerUI.classList.toggle('hidden', container.products.length===0);
+// Save state to local storage
+function saveState() {
+    localStorage.setItem('containerTrackerState', JSON.stringify(appState));
 }
 
-addProductBtn.onclick = async () => {
-  const code  = await showModal({ title:'New SKU', placeholder:'e.g. TAB26', type:'text' });
-  if (!code) return;
-  const total = parseInt(await showModal({ title:`Total items for ${code}`, placeholder:'100', type:'number' }),10);
-  if (!total || total<1) return alert('Enter a valid number.');
-  container.products.push({ code, target: total, sizes: [], entries: [] });
-  container.currentIndex = container.products.length - 1;
-  saveContainer(); renderProducts(); updateContainerUI();
-};
-
-newContainerBtn.onclick = () => {
-  if (confirm('Start a new container?')) {
-    container = { products: [], currentIndex: 0 };
-    saveContainer(); renderProducts();
-  }
-};
-
-productSelect.onchange = () => {
-  container.currentIndex = +productSelect.value;
-  saveContainer(); updateContainerUI();
-};
-
-async function addSize(){
-  const sz = parseInt(await showModal({ title:'Enter pallet size', placeholder:'10', type:'number' }),10);
-  if (!sz||sz<1) return alert('Invalid size.');
-  container.products[container.currentIndex].sizes.push(sz);
-  saveContainer(); updateContainerUI();
+// Get the currently active container object
+function getActiveContainer() {
+    return appState.containers.find(c => c.id === appState.activeContainerId);
 }
 
-// — Update UI —
-function updateContainerUI(){
-  const p   = container.products[container.currentIndex];
-  const sum = p.entries.reduce((a,b)=>a+b,0);
-  const left= Math.max(0, p.target - sum);
+// --- CORE METRICS CALCULATOR ---
+function calculateMetrics(container) {
+    let totalTarget = 0;
+    let totalUnitsPacked = 0;
+    let totalPallets = 0;
 
-  codeDisplay.textContent         = p.code;
-  totalDisplay.textContent        = p.target;
-  leftDisplay.textContent         = left;
-
-  // pallet projections
-  const size = p.sizes[0] || 1;
-  const needed    = Math.ceil(p.target / size);
-  const leftP     = Math.ceil(left / size);
-  palletsDisplay.textContent      = needed;
-  palletsLeftDisplay.textContent  = leftP;
-
-  renderSizes(p.sizes);
-  renderEntries(p.entries);
-  renderSuggestion(p.sizes,left);
-
-  saveContainer();
-}
-
-function renderSizes(sizes){
-  sizesContainer.innerHTML = '';
-  sizes.forEach(sz=>{
-    const btn = document.createElement('button');
-    btn.className   = 'chip';
-    btn.textContent = sz;
-    btn.onclick     = ()=> addEntry(sz);
-    sizesContainer.appendChild(btn);
-  });
-  // final "+ Size" chip
-  const add = document.createElement('button');
-  add.className   = 'chip';
-  add.textContent = '+ Size';
-  add.onclick     = addSize;
-  sizesContainer.appendChild(add);
-}
-
-function renderEntries(entries){
-  entriesDiv.innerHTML = '';
-  entries.forEach((sz,i)=>{
-    const chip = document.createElement('div');
-    chip.className   = 'entry-chip';
-    chip.textContent = sz;
-    let startX = 0;
-    chip.addEventListener('touchstart', e=> startX = e.touches[0].clientX );
-    chip.addEventListener('touchend',   e=>{
-      if (startX - e.changedTouches[0].clientX > 60){
-        chip.classList.add('removing');
-        setTimeout(()=>{
-          container.products[container.currentIndex].entries.splice(i,1);
-          updateContainerUI();
-        },300);
-      }
+    // Calculate totals across all SKUs
+    container.skus.forEach(sku => {
+        totalTarget += sku.target;
+        sku.entries.forEach(entry => {
+            totalUnitsPacked += entry.units;
+            totalPallets += 1;
+        });
     });
-    entriesDiv.appendChild(chip);
-  });
+
+    const progress = totalTarget > 0 ? Math.min(100, (totalUnitsPacked / totalTarget) * 100) : 0;
+    
+    // Time calculations
+    let activeTimeHours = 0;
+    let pph = 0;
+    let eta = "--:--";
+
+    if (container.startTime) {
+        const activeTimeMs = Date.now() - container.startTime;
+        activeTimeHours = activeTimeMs / (1000 * 60 * 60);
+
+        if (activeTimeHours > 0) {
+            pph = totalPallets / activeTimeHours;
+        }
+
+        // ETA Calculation
+        const unitsRemaining = Math.max(0, totalTarget - totalUnitsPacked);
+        const unitsPerHour = activeTimeHours > 0 ? (totalUnitsPacked / activeTimeHours) : 0;
+
+        if (unitsRemaining > 0 && unitsPerHour > 0) {
+            const timeRemainingHours = unitsRemaining / unitsPerHour;
+            const finishTimeMs = Date.now() + (timeRemainingHours * 60 * 60 * 1000);
+            const finishDate = new Date(finishTimeMs);
+            eta = finishDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } else if (unitsRemaining === 0 && totalTarget > 0) {
+            eta = "Complete";
+        } else {
+            eta = "Calculating...";
+        }
+    } else {
+        eta = "Not Started";
+    }
+
+    return {
+        totalTarget,
+        totalUnitsPacked,
+        totalPallets,
+        progress,
+        pph: pph.toFixed(1),
+        eta
+    };
 }
 
-function addEntry(sz){
-  const p = container.products[container.currentIndex];
-  if (p.entries.reduce((a,b)=>a+b,0) + sz > p.target){
-    return alert('Cannot exceed total.');
-  }
-  p.entries.push(sz);
-  updateContainerUI();
+
+// --- UI RENDERING ---
+
+function renderSidebar() {
+    const list = document.getElementById('containerList');
+    list.innerHTML = '';
+
+    appState.containers.forEach(container => {
+        const li = document.createElement('li');
+        li.className = `container-item ${container.id === appState.activeContainerId ? 'active' : ''}`;
+        li.onclick = () => selectContainer(container.id);
+        
+        const startedText = container.startTime ? 'In Progress' : 'Not Started';
+        
+        li.innerHTML = `
+            <strong>${container.name}</strong>
+            <span>${container.notes || 'No ID'} • ${startedText}</span>
+        `;
+        list.appendChild(li);
+    });
 }
 
-undoEntryBtn.onclick = ()=>{ 
-  const arr = container.products[container.currentIndex].entries;
-  if (arr.length) arr.pop();
-  updateContainerUI();
-};
-resetProductBtn.onclick = ()=>{
-  if (confirm('Reset entries?')){
-    container.products[container.currentIndex].entries = [];
-    updateContainerUI();
-  }
-};
+function renderMainView() {
+    const emptyState = document.getElementById('emptyState');
+    const activeView = document.getElementById('activeContainerView');
+    const container = getActiveContainer();
 
-function renderSuggestion(sizes,left){
-  let best=0;
-  sizes.forEach(sz=>{ if (sz<=left&&sz>best) best=sz; });
-  suggestionEl.textContent = best||'–';
+    if (!container) {
+        emptyState.classList.remove('hidden');
+        activeView.classList.add('hidden');
+        return;
+    }
+
+    emptyState.classList.add('hidden');
+    activeView.classList.remove('hidden');
+
+    // Header
+    document.getElementById('displayContainerName').textContent = container.name;
+    document.getElementById('displayContainerNotes').textContent = container.notes || 'No additional notes.';
+
+    updateMetricsDisplay();
+    renderSkus();
 }
 
-// — Yodel Logic —
-recordYodelBtn.onclick = ()=>{
-  yodelCount++; saveYodel(); updateYodelUI();
-};
-undoYodelBtn.onclick = ()=>{
-  if(yodelCount>0) yodelCount--; saveYodel(); updateYodelUI();
-};
-resetYodelBtn.onclick = ()=>{
-  if(confirm('Reset count?')){
-    yodelCount=0; saveYodel(); updateYodelUI();
-  }
-};
-function updateYodelUI(){
-  yodelCountDisplay.textContent = yodelCount;
+function updateMetricsDisplay() {
+    const container = getActiveContainer();
+    if (!container) return;
+
+    const metrics = calculateMetrics(container);
+
+    document.getElementById('metricProgress').textContent = `${Math.round(metrics.progress)}%`;
+    document.getElementById('progressBarFill').style.width = `${metrics.progress}%`;
+    document.getElementById('metricPacked').textContent = `${metrics.totalUnitsPacked.toLocaleString()} / ${metrics.totalTarget.toLocaleString()}`;
+    document.getElementById('metricPPH').textContent = metrics.pph;
+    document.getElementById('metricETA').textContent = metrics.eta;
 }
+
+function renderSkus() {
+    const container = getActiveContainer();
+    const list = document.getElementById('skuList');
+    list.innerHTML = '';
+
+    if (container.skus.length === 0) {
+        list.innerHTML = '<p class="text-secondary">No SKUs added yet. Click "Add SKU" to begin.</p>';
+        return;
+    }
+
+    container.skus.forEach(sku => {
+        const unitsPacked = sku.entries.reduce((sum, entry) => sum + entry.units, 0);
+        const isComplete = unitsPacked >= sku.target;
+
+        const card = document.createElement('div');
+        card.className = `sku-card`;
+        
+        card.innerHTML = `
+            <div class="sku-info">
+                <h4>${sku.code} ${isComplete ? '✅' : ''}</h4>
+                <p>Packed: <strong>${unitsPacked}</strong> / ${sku.target} Units</p>
+                <p>Pallets Logged: ${sku.entries.length}</p>
+            </div>
+            <div class="sku-actions">
+                ${!container.startTime 
+                    ? `<button class="btn btn-primary" onclick="startContainerTimer()">Start Timer to Pack</button>` 
+                    : `<button class="btn btn-primary" onclick="showPackPalletModal('${sku.id}')" ${isComplete ? 'disabled' : ''}>+ Pack Pallet</button>`
+                }
+            </div>
+        `;
+        list.appendChild(card);
+    });
+}
+
+
+// --- INTERACTIONS & LOGIC ---
+
+function selectContainer(id) {
+    appState.activeContainerId = id;
+    saveState();
+    renderSidebar();
+    renderMainView();
+}
+
+function startContainerTimer() {
+    const container = getActiveContainer();
+    if (!container) return;
+    container.startTime = Date.now();
+    saveState();
+    renderMainView();
+}
+
+function deleteCurrentContainer() {
+    if(confirm("Are you sure you want to delete this container?")) {
+        appState.containers = appState.containers.filter(c => c.id !== appState.activeContainerId);
+        appState.activeContainerId = null;
+        saveState();
+        renderSidebar();
+        renderMainView();
+    }
+}
+
+
+// --- MODAL SYSTEM ---
+
+let modalConfirmCallback = null;
+
+function showModal(title, contentHtml, onConfirm) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalContent').innerHTML = contentHtml;
+    modalConfirmCallback = onConfirm;
+    document.getElementById('modalOverlay').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.add('hidden');
+    modalConfirmCallback = null;
+}
+
+document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+    if (modalConfirmCallback) {
+        modalConfirmCallback();
+    }
+});
+
+// --- SPECIFIC MODALS ---
+
+function showNewContainerModal() {
+    const html = `
+        <div class="form-field">
+            <label>Container Name</label>
+            <input type="text" id="newContainerName" class="input-field" placeholder="e.g. Shipment 101">
+        </div>
+        <div class="form-field">
+            <label>Container ID / Notes (Optional)</label>
+            <input type="text" id="newContainerNotes" class="input-field" placeholder="e.g. Trailer #4521">
+        </div>
+    `;
+    showModal("Create New Container", html, () => {
+        const name = document.getElementById('newContainerName').value.trim();
+        if (!name) return alert("Name is required.");
+        
+        const newContainer = {
+            id: 'c_' + Date.now(),
+            name: name,
+            notes: document.getElementById('newContainerNotes').value.trim(),
+            startTime: null,
+            skus: []
+        };
+
+        appState.containers.unshift(newContainer);
+        appState.activeContainerId = newContainer.id;
+        saveState();
+        closeModal();
+        renderSidebar();
+        renderMainView();
+    });
+}
+
+function showNewSkuModal() {
+    const html = `
+        <div class="form-field">
+            <label>SKU Code</label>
+            <input type="text" id="newSkuCode" class="input-field" placeholder="e.g. LAPTOP-X1">
+        </div>
+        <div class="form-field">
+            <label>Target Units to Pack</label>
+            <input type="number" id="newSkuTarget" class="input-field" placeholder="e.g. 500">
+        </div>
+    `;
+    showModal("Add SKU to Container", html, () => {
+        const code = document.getElementById('newSkuCode').value.trim();
+        const target = parseInt(document.getElementById('newSkuTarget').value, 10);
+        
+        if (!code || isNaN(target) || target <= 0) return alert("Valid code and target required.");
+        
+        const container = getActiveContainer();
+        container.skus.push({
+            id: 's_' + Date.now(),
+            code: code,
+            target: target,
+            entries: []
+        });
+
+        saveState();
+        closeModal();
+        renderMainView();
+    });
+}
+
+function showPackPalletModal(skuId) {
+    const container = getActiveContainer();
+    const sku = container.skus.find(s => s.id === skuId);
+    
+    // Auto-calculate how many units are left so we can suggest it
+    const unitsPacked = sku.entries.reduce((sum, entry) => sum + entry.units, 0);
+    const unitsLeft = Math.max(0, sku.target - unitsPacked);
+
+    const html = `
+        <p style="margin-bottom:16px;">How many units are on this pallet for <strong>${sku.code}</strong>?</p>
+        <div class="form-field">
+            <label>Units on this Pallet</label>
+            <input type="number" id="packUnits" class="input-field" value="${unitsLeft}">
+        </div>
+    `;
+    showModal(`Pack Pallet`, html, () => {
+        const units = parseInt(document.getElementById('packUnits').value, 10);
+        if (isNaN(units) || units <= 0) return alert("Must be a valid number.");
+
+        sku.entries.push({
+            timestamp: Date.now(),
+            units: units
+        });
+
+        saveState();
+        closeModal();
+        renderMainView();
+    });
+}
+
+// --- BOOTSTRAP & BACKGROUND LOOPS ---
+
+// Auto-update metrics every second (to keep ETA and PPH live)
+setInterval(() => {
+    if (appState.activeContainerId && getActiveContainer()?.startTime) {
+        updateMetricsDisplay();
+    }
+}, 1000);
+
+// Start app
+loadState();
+renderSidebar();
+renderMainView();
