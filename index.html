@@ -1,96 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Container Tracker</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pallet Tracker - Offline Pro</title>
+  <!-- Prevents favicon errors -->
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-
+  <div id="appContainer" class="app-shell">
     <header class="app-header">
-        <div class="logo">📦 Container Tracker</div>
-        <button class="btn btn-primary" onclick="showNewContainerModal()">+ New Container</button>
+        <h1 id="appTitle" class="app-title-text">
+            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none" style="vertical-align: middle; margin-right: 8px; color: var(--accent-primary);"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            Pallet Tracker
+        </h1>
+        <div class="header-actions-container">
+            <div id="networkStatusIndicator" class="network-status synced">Offline Mode (Local Save)</div>
+        </div>
     </header>
 
-    <div class="layout">
-        <!-- Sidebar: List of Containers -->
-        <aside class="sidebar">
-            <h3>Active Containers</h3>
-            <ul id="containerList" class="container-list">
-                <!-- Populated by JS -->
-            </ul>
-        </aside>
-
-        <!-- Main Content: Packing & Tracking UI -->
-        <main class="main-content">
-            <div id="emptyState" class="empty-state">
-                <h2>No Container Selected</h2>
-                <p>Select a container from the sidebar or create a new one to start tracking progress.</p>
-            </div>
-
-            <div id="activeContainerView" class="hidden">
-                <div class="container-header">
-                    <div>
-                        <h2 id="displayContainerName">Container Name</h2>
-                        <p id="displayContainerNotes" class="text-secondary">Container ID / Notes</p>
-                    </div>
-                    <div class="header-actions">
-                        <button class="btn btn-danger-outline" onclick="deleteCurrentContainer()">Delete</button>
-                    </div>
-                </div>
-
-                <!-- Performance Metrics -->
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <span class="label">Progress</span>
-                        <strong class="value" id="metricProgress">0%</strong>
-                        <div class="progress-bar"><div id="progressBarFill" class="progress-fill"></div></div>
-                    </div>
-                    <div class="metric-card">
-                        <span class="label">Total Packed</span>
-                        <strong class="value" id="metricPacked">0 / 0</strong>
-                    </div>
-                    <div class="metric-card">
-                        <span class="label">Pallets / Hour (PPH)</span>
-                        <strong class="value" id="metricPPH">0.0</strong>
-                    </div>
-                    <div class="metric-card">
-                        <span class="label">Est. Finish Time</span>
-                        <strong class="value" id="metricETA">--:--</strong>
-                    </div>
-                </div>
-
-                <!-- SKUs Section -->
-                <div class="skus-section">
-                    <div class="section-header">
-                        <h3>SKU Manifest</h3>
-                        <button class="btn btn-secondary btn-small" onclick="showNewSkuModal()">+ Add SKU</button>
-                    </div>
-                    <div id="skuList" class="sku-list">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Universal Modal Overlay -->
-    <div id="modalOverlay" class="modal-overlay hidden">
-        <div class="modal-dialog">
-            <div class="modal-header">
-                <h3 id="modalTitle">Modal Title</h3>
-            </div>
-            <div class="modal-content" id="modalContent">
-                <!-- Dynamic Content -->
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-primary" id="modalConfirmBtn">Confirm</button>
-            </div>
+    <main class="main-content">
+      <!-- Your JS injects the exact Hub and Packing Views here -->
+      <section id="planAndPackScreen" class="screen active-screen">
+          <div id="planAndPackScreenContent"></div>
+      </section>
+    </main>
+    
+    <!-- Exact Original Modal System -->
+    <div id="modalOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true">
+        <div id="modalDialog" class="modal-dialog">
+            <header class="modal-header">
+                <h2 id="modalTitleText" class="modal-title"></h2>
+                <button id="modalCloseBtn" class="modal-close-btn" onclick="closeModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </header>
+            <div class="modal-content" id="modalCustomContent"></div>
+            <footer class="modal-actions">
+                <button id="modalCancelBtn" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button id="modalConfirmBtn" class="btn btn-primary">Confirm</button>
+            </footer>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Toasts -->
+    <div id="toast-notification-container"></div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
